@@ -1,20 +1,45 @@
-from fastapi import APIRouter, status
+from fastapi import APIRouter, Depends, status
+import datetime
 from typing import List
-from models import Book
+from models import BookModel
+
+from services.orm import ORM
 
 router = APIRouter(prefix='/books', tags=['books'])
 
-@router.get('/all', response_description='get all books', response_model=List[Book], status_code=status.HTTP_200_OK)
-def get(): pass
+orm = ORM(model='BookModel')
 
-@router.post('/find/{book_id}', response_description='get a book', response_model=Book, status_code=status.HTTP_200_OK)
-def findone(book_id:int): pass
 
-@router.get('/create', response_description='create a book', response_model=Book, status_code=status.HTTP_201_CREATED)
-def create(book:Book): pass
+@router.get('/all', response_description='get all books', status_code=status.HTTP_200_OK)
+def get():
+    return orm.find_all()
 
-@router.put('/update', response_description='update a book', response_model=Book, status_code=status.HTTP_200_OK)
-def update(book:Book): pass
+
+@router.post('/find/{book_id}', response_description='get a book', status_code=status.HTTP_200_OK)
+def findone(book_id: int): pass
+
+
+@router.get('/create', response_description='create a book', status_code=status.HTTP_201_CREATED)
+def create(book: BookModel):
+    orm.create(book)
+
+
+@router.put('/update', response_description='update a book', status_code=status.HTTP_200_OK)
+def update(book: BookModel): pass
+
 
 @router.delete('/delete/{book_id}', response_description='delete a book', status_code=status.HTTP_301_MOVED_PERMANENTLY)
-def delete(book_id:int): pass
+def delete(book_id: int): pass
+
+
+# for dev
+@router.get('/seed')
+def seed_book():
+    # book = BookModel(title='Demo Book', short_description='A Nice Book', author='Yusuf Berkay Girgin')
+    book = BookModel(title='Demo Book',
+                     short_description='A Nice Book',
+                     author='Yusuf Berkay Girgin',
+                     created_at=datetime.datetime.utcnow(),
+                     updated_at=datetime.datetime.utcnow()
+                )
+    create(book=book)
