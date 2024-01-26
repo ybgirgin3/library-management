@@ -6,8 +6,8 @@ from schemas import BookSchema, PatronSchema
 
 class ORM:
     def __init__(self, model: str):
-        self.model = BookModel if model == 'BookModel' else PatronModel
-        self.schema = BookSchema if model == 'BookModel' else PatronSchema
+        self.model = BookModel if model == "BookModel" else PatronModel
+        self.schema = BookSchema if model == "BookModel" else PatronSchema
 
     def find_all(self):
         try:

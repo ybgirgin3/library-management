@@ -7,18 +7,19 @@ from routers.books import router as book_routers
 
 app = FastAPI()
 
-origins = ['*']  # NOTE: for dev purpose allowed all
+origins = ["*"]  # NOTE: for dev purpose allowed all
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
     allow_credentials=True,
-    allow_methods=['*'],
-    allow_headers=['*']
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 try:
     _create_table("BookSchema", SQL_ALCHEMY_ENGINES["library"])
     _create_table("PatronSchema", SQL_ALCHEMY_ENGINES["library"])
-except: pass
+except:
+    pass
 
 app.include_router(book_routers)
