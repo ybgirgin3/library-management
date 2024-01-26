@@ -1,5 +1,5 @@
 from services.connection import session
-from typing import Union, List
+from typing import Union
 from models import BookModel, PatronModel, CheckoutModel
 from schemas import BookSchema, PatronSchema, CheckoutSchema
 
@@ -10,21 +10,15 @@ class ORM:
 
     @property
     def model(self):
-        if self.str_model == "BookModel":
-            return BookModel
-        elif self.str_model == "PatronModel":
-            return PatronModel
-        else:
-            return CheckoutModel
+        if self.str_model == "BookModel": return BookModel
+        elif self.str_model == "PatronModel": return PatronModel
+        else: return CheckoutModel
 
     @property
     def schema(self):
-        if self.str_model == "BookModel":
-            return BookSchema
-        elif self.str_model == "PatronModel":
-            return PatronSchema
-        else:
-            return CheckoutSchema
+        if self.str_model == "BookModel": return BookSchema
+        elif self.str_model == "PatronModel": return PatronSchema
+        else: return CheckoutSchema
 
     def find_all(self):
         try:
@@ -38,7 +32,7 @@ class ORM:
     def find_one(self, id: int):
         try:
             with session() as sess:
-                book = sess.query(self.schema).where(self.schema.id).first()
+                book = sess.query(self.schema).where(self.schema.id == id).first()
                 return book
         except Exception as e:
             print(e)
@@ -47,10 +41,8 @@ class ORM:
     def create(self, item: Union[BookModel, PatronModel, CheckoutModel]):
         try:
             with session() as sess:
-                try:
-                    item_to_save = self.schema(**item.dict())
-                except:
-                    item_to_save = item
+                try: item_to_save = self.schema(**item.dict())
+                except: item_to_save = item
                 sess.add(item_to_save)
                 sess.commit()
                 # sess.refresh(item)
