@@ -4,6 +4,7 @@ from services.connection import _create_table, SQL_ALCHEMY_ENGINES
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from routers.books import router as book_routers
+from routers.patrons import router as patron_routers
 
 app = FastAPI()
 
@@ -23,3 +24,4 @@ except:
     pass
 
 app.include_router(book_routers)
+app.include_router(patron_routers)

@@ -28,7 +28,7 @@ def findone(book_id: int):
     "/create", response_description="create a book", status_code=status.HTTP_201_CREATED
 )
 def create(book: BookModel):
-    orm.create(book)
+    return orm.create(book)
 
 
 @router.put(
@@ -48,7 +48,7 @@ def delete(book_id: int):
 
 
 # for dev
-@router.get("/seed")
+@router.post("/seed")
 def seed_book():
     # book = BookModel(title='Demo Book', short_description='A Nice Book', author='Yusuf Berkay Girgin')
     book = BookModel(
@@ -58,4 +58,4 @@ def seed_book():
         created_at=datetime.datetime.utcnow(),
         updated_at=datetime.datetime.utcnow(),
     )
-    create(book=book)
+    return create(book=book)

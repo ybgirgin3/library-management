@@ -30,7 +30,7 @@ class ORM:
     def create(self, item: Union[BookModel, PatronModel]):
         try:
             with session() as sess:
-                item_to_save = BookSchema(**item.dict())
+                item_to_save = self.schema(**item.dict())
                 sess.add(item_to_save)
                 sess.commit()
                 # sess.refresh(item)
