@@ -7,4 +7,5 @@ class BookModel(BaseModel):
     short_description: str
     author: str
     created_at: datetime
+    return_date: datetime
     updated_at: datetime

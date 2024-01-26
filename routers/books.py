@@ -16,6 +16,16 @@ orm = ORM(model="BookModel")
 def get():
     return orm.find_all()
 
+@router.post(
+    "/checkout/{book_id}", response_description="checkout a book", status_code=status.HTTP_202_ACCEPTED
+)
+def checkout(book_id: int):
+    # find book
+    book = findone(book_id)
+
+    # update book
+
+
 
 @router.post(
     "/find/{book_id}", response_description="get a book", status_code=status.HTTP_200_OK
@@ -56,6 +66,7 @@ def seed_book():
         short_description="A Nice Book",
         author="Yusuf Berkay Girgin",
         created_at=datetime.datetime.utcnow(),
+        return_date=datetime.datetime.utcnow() + datetime.timedelta(days=10),
         updated_at=datetime.datetime.utcnow(),
     )
     return create(book=book)
