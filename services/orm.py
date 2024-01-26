@@ -1,13 +1,30 @@
 from services.connection import session
 from typing import Union, List
-from models import BookModel, PatronModel
-from schemas import BookSchema, PatronSchema
+from models import BookModel, PatronModel, CheckoutModel
+from schemas import BookSchema, PatronSchema, CheckoutSchema
 
 
 class ORM:
     def __init__(self, model: str):
-        self.model = BookModel if model == "BookModel" else PatronModel
-        self.schema = BookSchema if model == "BookModel" else PatronSchema
+        self.str_model = model
+
+    @property
+    def model(self):
+        if self.str_model == "BookModel":
+            return BookModel
+        elif self.str_model == "PatronModel":
+            return PatronModel
+        else:
+            return CheckoutModel
+
+    @property
+    def schema(self):
+        if self.str_model == "BookModel":
+            return BookSchema
+        elif self.str_model == "PatronModel":
+            return PatronSchema
+        else:
+            return CheckoutSchema
 
     def find_all(self):
         try:
@@ -27,10 +44,13 @@ class ORM:
             print(e)
             return None
 
-    def create(self, item: Union[BookModel, PatronModel]):
+    def create(self, item: Union[BookModel, PatronModel, CheckoutModel]):
         try:
             with session() as sess:
-                item_to_save = self.schema(**item.dict())
+                try:
+                    item_to_save = self.schema(**item.dict())
+                except:
+                    item_to_save = item
                 sess.add(item_to_save)
                 sess.commit()
                 # sess.refresh(item)

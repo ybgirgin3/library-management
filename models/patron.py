@@ -1,9 +1,9 @@
 from pydantic import BaseModel
-from datetime import datetime
+from models import BookModel
+from typing import Optional, List
 
 
 class PatronModel(BaseModel):
     name: str
     email: str
-    created_at: datetime
-    updated_at: datetime
+    # checked_out_books: Optional[List[int]] = None

@@ -1,6 +1,5 @@
-from fastapi import APIRouter, Depends, status
-import datetime
-from typing import List
+from fastapi import APIRouter, status, HTTPException
+from typing import List, Union
 from models import BookModel
 
 from services.orm import ORM
@@ -13,25 +12,32 @@ orm = ORM(model="BookModel")
 @router.get(
     "/all", response_description="get all books", status_code=status.HTTP_200_OK
 )
-def get():
-    return orm.find_all()
-
-@router.post(
-    "/checkout/{book_id}", response_description="checkout a book", status_code=status.HTTP_202_ACCEPTED
-)
-def checkout(book_id: int):
-    # find book
-    book = findone(book_id)
-
-    # update book
-
+def find_all() -> List[BookModel]:
+    try:
+        books: Union[List[BookModel], None] = orm.find_all()
+        if not len(books) or books is None:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="No Book found"
+            )
+        return books
+    except Exception as e:
+        raise e
 
 
 @router.post(
     "/find/{book_id}", response_description="get a book", status_code=status.HTTP_200_OK
 )
-def findone(book_id: int):
-    pass
+def find_one(book_id: int) -> BookModel:
+    try:
+        book: Union[BookModel, None] = orm.find_one(id=book_id)
+        if book is None:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Patron given id is not found",
+            )
+        return book
+    except Exception as e:
+        raise e
 
 
 @router.get(
@@ -61,12 +67,17 @@ def delete(book_id: int):
 @router.post("/seed")
 def seed_book():
     # book = BookModel(title='Demo Book', short_description='A Nice Book', author='Yusuf Berkay Girgin')
+    # class BookModel(BaseModel):
+    #     title: str
+    #     short_description: str
+    #     author: str
+    #     available: bool
+
     book = BookModel(
         title="Demo Book",
         short_description="A Nice Book",
         author="Yusuf Berkay Girgin",
-        created_at=datetime.datetime.utcnow(),
-        return_date=datetime.datetime.utcnow() + datetime.timedelta(days=10),
-        updated_at=datetime.datetime.utcnow(),
+        available=True,
+        checkout_date=None,
     )
     return create(book=book)
