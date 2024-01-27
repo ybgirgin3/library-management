@@ -6,8 +6,8 @@
 [+] listing checked-out books by patrons
 [+] list overdue
 
-[ ] celery structure
-[ ] task management, worker management, beat
+[+] celery structure
+[+] task management, worker management, beat
 [ ] dockerize app
 [ ] authentication and authorization
 
