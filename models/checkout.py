@@ -1,9 +1,13 @@
-from pydantic import BaseModel
-from typing import Optional
+from __future__ import annotations
+
 from datetime import datetime
+from typing import Optional
+
+from pydantic import BaseModel
 
 
 class CheckoutModel(BaseModel):
     patron_id: int
     book_id: int
     checkout_date: Optional[datetime] = None
+    is_active: bool = True
