@@ -26,7 +26,8 @@ def refund(checkout_id: int, patron_id: Optional[int], book_id: Optional[int]) -
     try:
         # create query filter
         # search for unavailable books
-        q_filter: dict = {'checkout_id': checkout_id, 'patron_id': patron_id, 'book_id': book_id, 'is_active': 1}
+        q_filter: dict = {'checkout_id': checkout_id,
+                          'patron_id': patron_id, 'book_id': book_id, 'is_active': 1}
 
         # find checkout
         checkout = checkout_orm.find_one(q_filter=q_filter)
@@ -63,4 +64,3 @@ def refund(checkout_id: int, patron_id: Optional[int], book_id: Optional[int]) -
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f'unable to perform refund due to :{e}',
         )
-

@@ -1,16 +1,21 @@
+from __future__ import annotations
+
 import datetime
 
-from sqlalchemy import DateTime, Integer, String, Boolean
+from sqlalchemy import Boolean
+from sqlalchemy import DateTime
+from sqlalchemy import Integer
+from sqlalchemy import String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import Mapped
-from sqlalchemy.sql import func
 from sqlalchemy.orm import mapped_column
+from sqlalchemy.sql import func
 
 Base = declarative_base()
 
 
 class Book(Base):
-    __tablename__ = "book"
+    __tablename__ = 'book'
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     title: Mapped[str] = mapped_column(String, unique=True)
@@ -29,5 +34,3 @@ class Book(Base):
 
     class Config:
         orm_mode = True
-
-

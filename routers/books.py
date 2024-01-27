@@ -1,10 +1,15 @@
 from __future__ import annotations
 
-from typing import List, Union, Optional
+from typing import List
+from typing import Optional
+from typing import Union
 
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter
+from fastapi import HTTPException
+from fastapi import status
 
-from models import BookModel, Response
+from models import BookModel
+from models import Response
 from services.orm import ORM
 
 router = APIRouter(prefix='/books', tags=['books'])
@@ -72,7 +77,7 @@ def find_one(book: Union[str, int], available: Optional[int] = 1) -> Response:
             message=f'Book with {key}: {book} successfully found',
             data=found,
             reason=None
-            ).to_dict()
+        ).to_dict()
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,

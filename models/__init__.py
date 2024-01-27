@@ -1,4 +1,6 @@
+from __future__ import annotations
+
 from .book import BookModel
-from .patron import PatronModel
 from .checkout import CheckoutModel
+from .patron import PatronModel
 from .response import Response

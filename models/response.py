@@ -1,13 +1,20 @@
+from __future__ import annotations
+
 import dataclasses
-from typing import Optional, Union, List
-from models import BookModel, PatronModel
+from typing import List
+from typing import Optional
+from typing import Union
+
+from models import BookModel
+from models import PatronModel
 
 
 @dataclasses.dataclass
 class Response:
     status: int
     message: Optional[Union[str, None]] = None
-    data: Optional[Union[BookModel, PatronModel, List[BookModel], List[PatronModel]]] = None
+    data: Optional[Union[BookModel, PatronModel,
+                         List[BookModel], List[PatronModel]]] = None
     reason: Optional[List[str]] = None
 
     def to_dict(self):

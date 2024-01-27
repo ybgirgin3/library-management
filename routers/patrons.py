@@ -8,7 +8,8 @@ from fastapi import APIRouter
 from fastapi import HTTPException
 from fastapi import status
 
-from models import PatronModel, Response
+from models import PatronModel
+from models import Response
 from services.orm import ORM
 
 router = APIRouter(prefix='/patrons', tags=['patrons'])

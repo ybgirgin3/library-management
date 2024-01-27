@@ -1,16 +1,19 @@
 from __future__ import annotations
 
 import datetime
-from typing import List, Optional, Union
+from typing import List
+from typing import Optional
+from typing import Union
 
 from fastapi import APIRouter
 from fastapi import HTTPException
 from fastapi import status
 
-from models import CheckoutModel, Response
+from models import CheckoutModel
+from models import Response
+from services.orm import ORM
 # from routers.books import find_one as find_book
 # from routers.patrons import find_one as find_patron
-from services.orm import ORM
 
 router = APIRouter(prefix='/checkout', tags=['checkouts'])
 
@@ -64,10 +67,14 @@ def find_one(
     """
     q_filter: dict = {}
     try:
-        if checkout is not None: q_filter['checkout'] = checkout
-        if patron is not None: q_filter['patron'] = patron
-        if book is not None: q_filter['book'] = book
-        if is_active is not None: q_filter['is_active'] = is_active
+        if checkout is not None:
+            q_filter['checkout'] = checkout
+        if patron is not None:
+            q_filter['patron'] = patron
+        if book is not None:
+            q_filter['book'] = book
+        if is_active is not None:
+            q_filter['is_active'] = is_active
         checkout = checkout_orm.find_one(q_filter=q_filter)
         return Response(
             status=status.HTTP_200_OK,
@@ -95,7 +102,8 @@ def checkout_book(patron_id: int, book_id: int):
     """
 
     try:
-        is_exists = checkout_orm.find_one({'patron_id': patron_id, 'book_id': book_id})
+        is_exists = checkout_orm.find_one(
+            {'patron_id': patron_id, 'book_id': book_id})
         if is_exists:
             raise HTTPException(
                 status_code=status.HTTP_302_FOUND,
