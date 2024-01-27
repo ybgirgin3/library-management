@@ -36,6 +36,15 @@ class BookSchema(Base):
     class Config:
         orm_mode = True
 
+    def to_dict(self):
+        """
+        Convert SQLAlchemy model instance to a dictionary.
+        """
+        model_dict = {}
+        for column in self.__table__.columns:
+            model_dict[column.name] = getattr(self, column.name)
+        return model_dict
+
 
 class CheckoutSchema(Base):
     __tablename__ = 'checkout'
@@ -56,6 +65,15 @@ class CheckoutSchema(Base):
     class Config:
         orm_mode = True
 
+    def to_dict(self):
+        """
+        Convert SQLAlchemy model instance to a dictionary.
+        """
+        model_dict = {}
+        for column in self.__table__.columns:
+            model_dict[column.name] = getattr(self, column.name)
+        return model_dict
+
 
 class PatronSchema(Base):
     __tablename__ = 'patron'
@@ -74,3 +92,12 @@ class PatronSchema(Base):
 
     class Config:
         orm_mode = True
+
+    def to_dict(self):
+        """
+        Convert SQLAlchemy model instance to a dictionary.
+        """
+        model_dict = {}
+        for column in self.__table__.columns:
+            model_dict[column.name] = getattr(self, column.name)
+        return model_dict

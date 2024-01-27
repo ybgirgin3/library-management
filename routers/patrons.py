@@ -8,7 +8,7 @@ from fastapi import APIRouter
 from fastapi import HTTPException
 from fastapi import status
 
-from models import PatronModel
+from models import PatronModel, Response
 from services.orm import ORM
 
 router = APIRouter(prefix='/patrons', tags=['patrons'])
@@ -21,7 +21,7 @@ orm = ORM(model='PatronModel')
     response_description='get all patrons',
     status_code=status.HTTP_200_OK,
 )
-def find_all() -> List[PatronModel]:
+def find_all() -> Response:
     try:
         patrons: Union[List[PatronModel], None] = orm.find_all()
         if patrons is None:
@@ -29,9 +29,17 @@ def find_all() -> List[PatronModel]:
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail='No Patron found',
             )
-        return patrons
+        return Response(
+            status=status.HTTP_200_OK,
+            message='Patrons Found',
+            data=patrons,
+            reason=None
+        ).to_dict()
     except Exception as e:
-        raise e
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f'No Patron found due to :{e}',
+        )
 
 
 @router.get(
@@ -39,7 +47,7 @@ def find_all() -> List[PatronModel]:
     response_description='get a patron',
     status_code=status.HTTP_200_OK,
 )
-def find_one(patron: Union[str, int]) -> Union[PatronModel, None]:
+def find_one(patron: Union[str, int]) -> Response:
     """
     usage :0000/patrons/find?patron=1
     :param patron: patron id or name or email
@@ -48,8 +56,9 @@ def find_one(patron: Union[str, int]) -> Union[PatronModel, None]:
     try:
         # NOTE: run find_one value whether param is id or email or name
         key: str = ''
-        if isinstance(patron, int):
+        if isinstance(patron, int) or patron.isnumeric():
             key = 'id'
+            patron = int(patron)
         elif isinstance(patron, str):
             if '@' in patron:
                 key = 'email'
@@ -64,9 +73,17 @@ def find_one(patron: Union[str, int]) -> Union[PatronModel, None]:
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail='Patron given id is not found',
             )
-        return found
+        return Response(
+            status=status.HTTP_200_OK,
+            message=f'Patron with {key}: {patron} found successfully',
+            data=found,
+            reason=None
+        ).to_dict()
     except Exception as e:
-        raise e
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f'Unable to get patron due to {e}',
+        )
 
 
 @router.post(
@@ -74,8 +91,25 @@ def find_one(patron: Union[str, int]) -> Union[PatronModel, None]:
     response_description='create a patron',
     status_code=status.HTTP_201_CREATED,
 )
-def create(patron: PatronModel):
-    return orm.create(patron)
+def create(patron: PatronModel) -> Response:
+    try:
+        saved = orm.create(patron)
+        if saved is None:
+            raise HTTPException(
+                status_code=status.HTTP_204_NO_CONTENT,
+                detail=f'unable to create',
+            )
+        return Response(
+            status=status.HTTP_201_CREATED,
+            message='Patron Successfully Created',
+            data=saved,
+            reason=None
+        ).to_dict()
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f'unable to create patron due to {e}',
+        )
 
 
 @router.put(
@@ -98,10 +132,10 @@ def delete(patron_id: int):
 
 # for dev
 @router.post('/seed')
-def seed_patron():
+def seed_patron(patron: PatronModel):
     # book = BookModel(title='Demo Book', short_description='A Nice Book', author='Yusuf Berkay Girgin')
-    patron = PatronModel(
-        name='Yusuf Berkay Girgin',
-        email='berkay@girgin.com',
-    )
+    # patron = PatronModel(
+    #     name='Yusuf Berkay Girgin',
+    #     email='berkay@girgin.com',
+    # )
     return create(patron=patron)
