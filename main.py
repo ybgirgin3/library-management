@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from dotenv import dotenv_values
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware

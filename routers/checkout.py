@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import datetime
 from typing import List
 from typing import Optional
@@ -12,6 +10,7 @@ from fastapi import status
 from models import CheckoutModel
 from models import Response
 from services.orm import ORM
+
 # from routers.books import find_one as find_book
 # from routers.patrons import find_one as find_patron
 
@@ -160,11 +159,11 @@ def checkout_book(patron_id: int, book_id: int):
         )
 
 
-@router.post(
-    '/create',
-    response_description='create a patron',
-    status_code=status.HTTP_201_CREATED,
-)
+# @router.post(
+#     '/create',
+#     response_description='create a patron',
+#     status_code=status.HTTP_201_CREATED,
+# )
 def create(checkout: CheckoutModel) -> Response:
     try:
         saved = checkout_orm.create(checkout)

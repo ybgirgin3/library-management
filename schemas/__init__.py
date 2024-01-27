@@ -1,7 +1,6 @@
-from __future__ import annotations
-
 import datetime
 from typing import List
+from typing import Optional
 
 from sqlalchemy import Boolean
 from sqlalchemy import DateTime
@@ -54,7 +53,7 @@ class CheckoutSchema(Base):
     checkout_date: Mapped[datetime.datetime] = mapped_column(
         DateTime, default=datetime.datetime.utcnow(),
     )
-    expiring_data: Mapped[datetime.datetime] = mapped_column(
+    refund_date: Mapped[datetime.datetime] = mapped_column(
         DateTime, default=(
             datetime.datetime.utcnow() +
             datetime.timedelta(days=10)

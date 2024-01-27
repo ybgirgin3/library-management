@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from datetime import datetime
 from typing import Optional
 
@@ -10,4 +8,5 @@ class CheckoutModel(BaseModel):
     patron_id: int
     book_id: int
     checkout_date: Optional[datetime] = None
+    refund_date: Optional[datetime] = None
     is_active: bool = True

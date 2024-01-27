@@ -1,7 +1,4 @@
-from __future__ import annotations
-
 import datetime
-from typing import Optional
 
 from fastapi import APIRouter
 from fastapi import HTTPException
@@ -10,6 +7,7 @@ from fastapi import status
 from models import Response
 from routers.books import find_one as find_book
 from services.orm import ORM
+# from typing import Optional
 
 
 router = APIRouter(prefix='/refund', tags=['refund'])
@@ -22,7 +20,7 @@ checkout_orm = ORM(model='CheckoutModel')
     '/',
     response_description='refund a book',
 )
-def refund(checkout_id: int, patron_id: Optional[int], book_id: Optional[int]) -> Response:
+def refund(checkout_id: int, patron_id: int, book_id: int):
     try:
         # create query filter
         # search for unavailable books
@@ -55,7 +53,7 @@ def refund(checkout_id: int, patron_id: Optional[int], book_id: Optional[int]) -
         return Response(
             status=status.HTTP_200_OK,
             message=f'Book Successfully Refunded',
-            data=None,
+            data={'asdasd'},
             reason=None
         )
 

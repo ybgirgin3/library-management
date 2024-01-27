@@ -2,8 +2,8 @@
 [+] book routers
 [+] patron routers
 [+] checkout
-[ ] refund
-[ ] listing checked-out books by patrons
+[+] refund
+[+] listing checked-out books by patrons
 [ ] list overdue
 
 [ ] celery structure
@@ -12,4 +12,3 @@
 [ ] authentication and authorization
 
 [ ] documentation
-
