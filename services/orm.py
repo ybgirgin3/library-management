@@ -45,8 +45,8 @@ class ORM:
             return None
 
     def find_one(self, q_filter: dict):
-        if 'is_active' not in q_filter:
-            q_filter['is_active'] = 1
+        # if 'is_active' not in q_filter:
+        #     q_filter['is_active'] = 1
         try:
             with session() as sess:
                 result = sess.query(self.schema)

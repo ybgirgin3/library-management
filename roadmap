@@ -4,7 +4,7 @@
 [+] checkout
 [+] refund
 [+] listing checked-out books by patrons
-[ ] list overdue
+[+] list overdue
 
 [ ] celery structure
 [ ] task management, worker management, beat

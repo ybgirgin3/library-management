@@ -22,7 +22,11 @@ checkout_orm = ORM(model='CheckoutModel')
 
 
 @router.get('/all', response_description='get all checkouts')
-def find_all():
+def find_all(overdue: Optional[int] = 0):
+    def _find_overdue(_checkouts: List[CheckoutModel]) -> List[CheckoutModel]:
+        today = datetime.datetime.utcnow()
+        return [checkout for checkout in checkouts if checkout.refund_date <= today]
+
     try:
         checkouts: Union[List[CheckoutModel], None] = checkout_orm.find_all()
         if not len(checkouts) or checkouts is None:
@@ -30,10 +34,12 @@ def find_all():
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail='No Checkout Found',
             )
+        if bool(overdue): found = _find_overdue(checkouts)
+        else: found = checkouts
         return Response(
             status=status.HTTP_200_OK,
             message='All Checkouts Got Successfully',
-            data=checkouts,
+            data=found,
             reason=None
         )
     except Exception as e:
@@ -110,7 +116,7 @@ def checkout_book(patron_id: int, book_id: int):
             )
 
         # find patron
-        patron = patron_orm.find_one({'patron_id': patron_id})
+        patron = patron_orm.find_one({'id': patron_id})
         if patron is None:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
@@ -119,7 +125,7 @@ def checkout_book(patron_id: int, book_id: int):
 
         # find book
         # book = find_book(book=book_id)
-        book = book_orm.find_one({'book_id': book_id})
+        book = book_orm.find_one({'id': book_id})
         if book is None:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
