@@ -102,7 +102,7 @@ def find_one(book: Union[str, int], available: Optional[int] = 1,
         )
 
 
-@router.get(
+@router.post(
     '/create',
     response_description='create a book',
     status_code=status.HTTP_201_CREATED,
