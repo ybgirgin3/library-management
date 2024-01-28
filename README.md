@@ -31,7 +31,7 @@ The project is structured as follows:
 
 1. Install the dependencies listed in `requirements.txt`.
 2. Configure the environment variables using a `.env` file.
-3. Pull redis docker image by running `docker pull redis`
+3. Pull redis docker image by running `docker pull redis` and then run it from docker desktop app
 4. Run the FastAPI server using `DEBUG=1 uvicorn main:app --reload`.
 5. This will run your app in DEBUG mode this means it will connect to local redis
 
@@ -48,6 +48,11 @@ The following environment variables need to be configured:
 ## Deployment
 
 Ensure that the necessary services (database, Redis, etc.) are running and accessible before deploying the application.
+
+## Screenshots
+You can see mail screenshots below:
+
+<img src="docs/IMG_2447.jpg" style="width: 300px">
 
 ## Contributors
 
