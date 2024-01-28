@@ -1,4 +1,5 @@
 import datetime
+import os
 
 import redis
 from celery import Celery
@@ -7,10 +8,17 @@ from celery import Celery
 # backend_redis = redis.Redis(host='0.0.0.0', port=6379, db=1)
 # app = Celery('library', broker=main_redis)
 
-app = Celery('library', broker='redis://redis:6379/0')
+broker = 'redis://redis:6379/0'
+backend_broker = 'redis://redis:6379/1'
+
+if os.environ.get('DEBUG') == 1:
+    broker = 'redis://localhost:6379/0'
+    backend_broker = 'redis://localhost:6379/1'
+
+app = Celery('library', broker=broker)
 
 
-app.conf.result_backend = 'redis://redis:6379/1'
+app.conf.result_backend = backend_broker
 app.conf.beat_schedule = {
     'task.overdue_process': {
         'task': 'task.overdue_process',
