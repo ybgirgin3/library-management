@@ -171,6 +171,13 @@ def checkout_book(patron_id: int, book_id: int, current_user: User = Depends(get
         )
 
 
+@router.post('/seed', response_description='create a overdue checkout')
+def create_overdue(checkout: CheckoutModel):
+    checkout.checkout_date = datetime.datetime.utcnow()
+    checkout.refund_date = datetime.datetime.utcnow()
+    create(checkout)
+
+
 # @router.post(
 #     '/create',
 #     response_description='create a patron',

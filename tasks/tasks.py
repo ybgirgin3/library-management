@@ -12,15 +12,32 @@ from tasks.mail_sender import Mail
 
 patron_orm = ORM(model='PatronModel')
 
+overdue_mock = [{'id': 1,
+  'patron_id': 1,
+  'book_id': 1,
+  'checkout_date': datetime.datetime(2024, 1, 28, 14, 55, 0, 50152),
+  'refund_date': datetime.datetime(2024, 1, 28, 14, 55, 0, 51317),
+  'is_active': True}]
+checkout_mock = [{'id': 1,
+  'patron_id': 1,
+  'book_id': 1,
+  'checkout_date': datetime.datetime(2024, 1, 28, 14, 55, 0, 50152),
+  'refund_date': datetime.datetime(2024, 1, 28, 14, 55, 0, 51317),
+  'is_active': True}]
+
+
+
 
 # =========== checkouts begins ===============
 @app.task(name='task.get_overdues', bind=True)
 def get_overdues(self):
     overdues = checkout_findall(overdue=1).data
-    if len(overdues):
-        overdues_as_dict = [o.to_dict() for o in overdues]
-        return overdues_as_dict
-        # app.send_task(name='task.reminder', args=[overdues_as_dict], queue='send_reminder_mail')
+    if not overdues or not len(overdues):
+        return None
+
+    overdues_as_dict = [o.to_dict() for o in overdues]
+    return overdues_as_dict
+
 
 @app.task(name='task.get_checkouts', bind=True)
 def get_checkouts(self):
@@ -47,6 +64,9 @@ def reminder(self, overdues: List[Dict]):
     # perform mail send
     for _id in patron_ids:
         rec: PatronModel = patron_orm.find_one({'id': _id})
+        if rec is None:
+            print(f'Unable to find email from current rec: {rec}')
+            continue
         m = Mail(receiver_mails=rec.email, data=overdues)
         m.overdue()
     return 'Overdue mail sending task is successfully finished'
@@ -60,6 +80,9 @@ def reporter(self, checkouts: List[Dict]) -> str:
     for _id in patron_ids:
         try:
             rec: PatronModel = patron_orm.find_one({'id': _id, 'is_super': 1})
+            if rec is None:
+                print(f'Unable to find email from current rec: {rec}')
+                continue
             m = Mail(receiver_mails=rec.email, data=checkouts, mail_type='report')
             m.weekly_report()
         except Exception as e:

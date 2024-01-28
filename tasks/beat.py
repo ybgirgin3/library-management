@@ -1,13 +1,20 @@
 import datetime
 
+import redis
 from celery import Celery
 
 # ◇ Create Celery tasks to automate the following library operations:   Send email
 # reminders to patrons for overdue books.
 # Generate weekly reports of book checkout statistics
 
-app = Celery('library', broker='redis://localhost:6379/0')
+# main_redis = redis.Redis(host='0.0.0.0', port=6379, db=0)
+# backend_redis = redis.Redis(host='0.0.0.0', port=6379, db=1)
+# app = Celery('library', broker=main_redis)
 
+app = Celery('library', broker='redis://redis:6379/0')
+
+
+app.conf.result_backend = 'redis://redis:6379/1'
 app.conf.beat_schedule = {
     'task.overdue_process': {
         'task': 'task.overdue_process',
@@ -18,5 +25,3 @@ app.conf.beat_schedule = {
         'schedule': datetime.timedelta(seconds=20)
     },
 }
-
-app.conf.result_backend = 'redis://localhost:6379/1'

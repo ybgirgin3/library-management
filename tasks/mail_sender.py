@@ -14,7 +14,6 @@ load_dotenv()
 
 
 class Mail:
-    smtp = smtplib.SMTP('smtp-mail.outlook.com', port=587)
     # CREDENTIALS = json.loads(open('.credentials.json'))
     CREDENTIALS = {
         'EMAIL': 'library_management@outlook.com',
@@ -28,6 +27,7 @@ class Mail:
                  data: Union[Dict, List[Dict]],
                  mail_type: str = None
                  ) -> None:
+        self.smtp = smtplib.SMTP('smtp-mail.outlook.com', port=587)
         self.mail_type = 'overdue' if mail_type is None else 'report'
         self.receiver_mails = [receiver_mails] if isinstance(receiver_mails, str) else receiver_mails
         self.data = [data] if isinstance(data, str) else data
@@ -37,30 +37,39 @@ class Mail:
         # self.smtp.login(self.CREDENTIALS['EMAIL'], self.CREDENTIALS['PASSWORD'])
 
     def overdue(self):
-        for rec in self.receiver_mails:
-            self.email['From'] = self.CREDENTIALS['EMAIL']
-            self.email['To'] = rec
-            self.email['Subject'] = self.OVERDUE_SUBJECT
-            self.send(rec)
+        try:
+            for rec in self.receiver_mails:
+                self.email['From'] = self.CREDENTIALS['EMAIL']
+                self.email['To'] = rec
+                self.email['Subject'] = self.OVERDUE_SUBJECT
+                self.send(rec)
+        except Exception as e:
+            print('error in overdue send mail', e, rec)
 
     def weekly_report(self):
-        for rec in self.receiver_mails:
-            self.email['From'] = self.CREDENTIALS['EMAIL']
-            self.email['To'] = rec
-            self.email['Subject'] = self.REPORT_SUBJECT
-            self.send(rec)
+        try:
+            for rec in self.receiver_mails:
+                self.email['From'] = self.CREDENTIALS['EMAIL']
+                self.email['To'] = rec
+                self.email['Subject'] = self.REPORT_SUBJECT
+                self.send(rec)
+        except Exception as e:
+            print('error in weekly report send mail', e, rec)
 
     def send(self, receiver):
         # [{'id': 3, 'patron_id': 1, 'book_id': 2,
         #         'checkout_date': datetime.datetime(2024, 1, 27, 18, 46, 28, 897807),
         #         'refund_date': datetime.datetime(2024, 1, 27, 18, 46, 28, 897807), 'is_active': True}]
 
-        self.smtp.starttls()
-        self.smtp.login(self.CREDENTIALS['EMAIL'], self.CREDENTIALS['PASSWORD'])
+        try:
+            self.smtp.starttls()
+            self.smtp.login(self.CREDENTIALS['EMAIL'], self.CREDENTIALS['PASSWORD'])
 
-        self.smtp.sendmail(self.CREDENTIALS['EMAIL'], receiver, self.email.as_string())
-        time.sleep(2)
-        self.smtp.quit()
+            self.smtp.sendmail(self.CREDENTIALS['EMAIL'], receiver, self.email.as_string())
+            time.sleep(2)
+            self.smtp.quit()
+        except Exception as e:
+            print('error while sending mail', e, receiver)
 
     def create_html_body(self, data: DataFrame):
         body = f"""

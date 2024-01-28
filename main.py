@@ -22,10 +22,12 @@ app.add_middleware(
 )
 
 try:
+    print('createing tables')
     _create_table('BookSchema', SQL_ALCHEMY_ENGINES['library'])
     _create_table('PatronSchema', SQL_ALCHEMY_ENGINES['library'])
     _create_table('CheckoutSchema', SQL_ALCHEMY_ENGINES['library'])
 except:
+    print('tables not creating')
     pass
 
 app.include_router(book_routers)
