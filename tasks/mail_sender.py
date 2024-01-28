@@ -17,8 +17,8 @@ class Mail:
     smtp = smtplib.SMTP('smtp-mail.outlook.com', port=587)
     # CREDENTIALS = json.loads(open('.credentials.json'))
     CREDENTIALS = {
-      'EMAIL': 'library_management@outlook.com',
-      'PASSWORD': 'lm_system_9876'
+        'EMAIL': 'library_management@outlook.com',
+        'PASSWORD': 'lm_system_9876'
     }
     OVERDUE_SUBJECT = 'You Have Books with Overdue\'d Date'
     REPORT_SUBJECT = 'Your Weekly Report is Here'
@@ -26,12 +26,12 @@ class Mail:
     def __init__(self,
                  receiver_mails: Union[str, List[str]],
                  data: Union[Dict, List[Dict]],
-                 mail_type: str = 'overdue'
-        ) -> None:
+                 mail_type: str = None
+                 ) -> None:
+        self.mail_type = 'overdue' if mail_type is None else 'report'
         self.receiver_mails = [receiver_mails] if isinstance(receiver_mails, str) else receiver_mails
         self.data = [data] if isinstance(data, str) else data
         self.email = self.create_html_body(DataFrame(self.data))
-        self.mail_type = mail_type
 
     def overdue(self):
         for rec in self.receiver_mails:

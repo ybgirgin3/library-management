@@ -58,9 +58,13 @@ def reporter(self, checkouts: List[Dict]) -> str:
 
     # perform mail send
     for _id in patron_ids:
-        rec: PatronModel = patron_orm.find_one({'id': _id})
-        m = Mail(receiver_mails=rec.email, data=checkouts, mail_type='report')
-        m.weekly_report()
+        try:
+            rec: PatronModel = patron_orm.find_one({'id': _id, 'is_super': 1})
+            m = Mail(receiver_mails=rec.email, data=checkouts, mail_type='report')
+            m.weekly_report()
+        except Exception as e:
+            print('unable to continue to process due to: %s', e)
+
     return 'Weekly report sending task is successfully finished'
 
 # =========== mails ends ===============
