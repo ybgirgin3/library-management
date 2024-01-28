@@ -1,11 +1,13 @@
-import datetime
 from typing import List
 from typing import Union
 
 from fastapi import APIRouter
+from fastapi import Depends
 from fastapi import HTTPException
 from fastapi import status
 
+from auth import get_current_user
+from auth import User
 from models import PatronModel
 from models import Response
 from services.orm import ORM
@@ -20,7 +22,7 @@ orm = ORM(model='PatronModel')
     response_description='get all patrons',
     status_code=status.HTTP_200_OK,
 )
-def find_all() -> Response:
+def find_all(current_user: User = Depends(get_current_user)) -> Response:
     try:
         patrons: Union[List[PatronModel], None] = orm.find_all()
         if patrons is None:
@@ -46,7 +48,7 @@ def find_all() -> Response:
     response_description='get a patron',
     status_code=status.HTTP_200_OK,
 )
-def find_one(patron: Union[str, int]) -> Response:
+def find_one(patron: Union[str, int], current_user: User = Depends(get_current_user)) -> Response:
     """
     usage :0000/patrons/find?patron=1
     :param patron: patron id or name or email
@@ -90,7 +92,7 @@ def find_one(patron: Union[str, int]) -> Response:
     response_description='create a patron',
     status_code=status.HTTP_201_CREATED,
 )
-def create(patron: PatronModel) -> Response:
+def create(patron: PatronModel, current_user: User = Depends(get_current_user)) -> Response:
     try:
         saved = orm.create(patron)
         if saved is None:
@@ -116,7 +118,7 @@ def create(patron: PatronModel) -> Response:
     response_description='update a patron',
     status_code=status.HTTP_200_OK,
 )
-def update(patron: PatronModel):
+def update(patron: PatronModel, current_user: User = Depends(get_current_user)):
     pass
 
 
@@ -125,13 +127,13 @@ def update(patron: PatronModel):
     response_description='delete a patron',
     status_code=status.HTTP_301_MOVED_PERMANENTLY,
 )
-def delete(patron_id: int):
+def delete(patron_id: int, current_user: User = Depends(get_current_user)):
     pass
 
 
 # for dev
 @router.post('/seed')
-def seed_patron(patron: PatronModel):
+def seed_patron(patron: PatronModel, current_user: User = Depends(get_current_user)):
     # book = BookModel(title='Demo Book', short_description='A Nice Book', author='Yusuf Berkay Girgin')
     # patron = PatronModel(
     #     name='Yusuf Berkay Girgin',

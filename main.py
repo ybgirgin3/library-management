@@ -2,6 +2,7 @@ from dotenv import dotenv_values
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from auth import router as auth_routers
 from routers.books import router as book_routers
 from routers.checkout import router as checkout_routers
 from routers.patrons import router as patron_routers
@@ -31,3 +32,4 @@ app.include_router(book_routers)
 app.include_router(patron_routers)
 app.include_router(checkout_routers)
 app.include_router(refund_routers)
+app.include_router(auth_routers)

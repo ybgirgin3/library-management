@@ -4,9 +4,12 @@ from typing import Optional
 from typing import Union
 
 from fastapi import APIRouter
+from fastapi import Depends
 from fastapi import HTTPException
 from fastapi import status
 
+from auth import get_current_user
+from auth import User
 from models import CheckoutModel
 from models import Response
 from services.orm import ORM
@@ -22,7 +25,7 @@ checkout_orm = ORM(model='CheckoutModel')
 
 
 @router.get('/all', response_description='get all checkouts')
-def find_all(overdue: Optional[int] = 0):
+def find_all(overdue: Optional[int] = 0, current_user: User = Depends(get_current_user)):
     def _find_overdue(_checkouts: List[CheckoutModel]) -> List[CheckoutModel]:
         today = datetime.datetime.utcnow()
         return [checkout for checkout in checkouts if checkout.refund_date <= today]
@@ -34,8 +37,10 @@ def find_all(overdue: Optional[int] = 0):
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail='No Checkout Found',
             )
-        if bool(overdue): found = _find_overdue(checkouts)
-        else: found = checkouts
+        if bool(overdue):
+            found = _find_overdue(checkouts)
+        else:
+            found = checkouts
         return Response(
             status=status.HTTP_200_OK,
             message='All Checkouts Got Successfully',
@@ -61,6 +66,7 @@ def find_one(
         book: Optional[int] = None,
         # === is active param ===
         is_active: Optional[int] = None,
+        current_user: User = Depends(get_current_user)
 ):
     """
     usage: :0000/find?book=1&patron=3&is_active=1
@@ -98,7 +104,7 @@ def find_one(
     '/new',
     response_description='checkout a book',
 )
-def checkout_book(patron_id: int, book_id: int):
+def checkout_book(patron_id: int, book_id: int, current_user: User = Depends(get_current_user)):
     """
     usage :0000/new?patron_id=1&book_id=199
     :param patron_id: patron id
@@ -170,7 +176,7 @@ def checkout_book(patron_id: int, book_id: int):
 #     response_description='create a patron',
 #     status_code=status.HTTP_201_CREATED,
 # )
-def create(checkout: CheckoutModel) -> Response:
+def create(checkout: CheckoutModel, current_user: User = Depends(get_current_user)) -> Response:
     try:
         saved = checkout_orm.create(checkout)
         if saved is None:

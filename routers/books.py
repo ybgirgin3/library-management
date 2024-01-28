@@ -3,9 +3,12 @@ from typing import Optional
 from typing import Union
 
 from fastapi import APIRouter
+from fastapi import Depends
 from fastapi import HTTPException
 from fastapi import status
 
+from auth import get_current_user
+from auth import User
 from models import BookModel
 from models import Response
 from services.orm import ORM
@@ -19,8 +22,9 @@ orm = ORM(model='BookModel')
     '/all',
     response_description='get all books',
     status_code=status.HTTP_200_OK,
+    # response_model=Response
 )
-def find_all() -> Response:
+def find_all(current_user: User = Depends(get_current_user)) -> Response:
     try:
         books: Union[List[BookModel], None] = orm.find_all()
         if not len(books) or books is None:
@@ -46,9 +50,11 @@ def find_all() -> Response:
     response_description='get a book',
     status_code=status.HTTP_200_OK,
 )
-def find_one(book: Union[str, int], available: Optional[int] = 1) -> Response:
+def find_one(book: Union[str, int], available: Optional[int] = 1,
+             current_user: User = Depends(get_current_user)) -> Response:
     """
     usage: :0000/books/find?book=1
+    :param current_user:
     :param book: book id or name
     :param available: if book is available
     :return:
@@ -88,7 +94,7 @@ def find_one(book: Union[str, int], available: Optional[int] = 1) -> Response:
     response_description='create a book',
     status_code=status.HTTP_201_CREATED,
 )
-def create(book: BookModel) -> Response:
+def create(book: BookModel, current_user: User = Depends(get_current_user)) -> Response:
     try:
         saved = orm.create(book)
         if saved is None:
@@ -114,7 +120,7 @@ def create(book: BookModel) -> Response:
     response_description='update a book',
     status_code=status.HTTP_200_OK,
 )
-def update(book: BookModel):
+def update(book: BookModel, current_user: User = Depends(get_current_user)):
     pass
 
 
@@ -123,13 +129,13 @@ def update(book: BookModel):
     response_description='delete a book',
     status_code=status.HTTP_301_MOVED_PERMANENTLY,
 )
-def delete(book_id: int):
+def delete(book_id: int, current_user: User = Depends(get_current_user)):
     pass
 
 
 # for dev
 @router.post('/seed')
-def seed_book(book: BookModel):
+def seed_book(book: BookModel, current_user: User = Depends(get_current_user)):
     # book = BookModel(title='Demo Book', short_description='A Nice Book', author='Yusuf Berkay Girgin')
     # class BookModel(BaseModel):
     #     title: str
