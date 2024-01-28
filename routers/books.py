@@ -25,6 +25,15 @@ orm = ORM(model='BookModel')
     # response_model=Response
 )
 def find_all(current_user: User = Depends(get_current_user)) -> Response:
+    """
+    Retrieve all books.
+
+    Args:
+        current_user: The current authenticated user.
+
+    Returns:
+        Response: Response object containing books or error message.
+    """
     try:
         books: Union[List[BookModel], None] = orm.find_all()
         if not len(books) or books is None:
@@ -53,11 +62,15 @@ def find_all(current_user: User = Depends(get_current_user)) -> Response:
 def find_one(book: Union[str, int], available: Optional[int] = 1,
              current_user: User = Depends(get_current_user)) -> Response:
     """
-    usage: :0000/books/find?book=1
-    :param current_user:
-    :param book: book id or name
-    :param available: if book is available
-    :return:
+    Retrieve a book by ID or name.
+
+    Args:
+        book: Book ID or name.
+        available: Flag indicating if the book is available.
+        current_user: The current authenticated user.
+
+    Returns:
+        Response: Response object containing the book or error message.
     """
     try:
         # NOTE: run find_one value whether param is id or email or name
@@ -95,6 +108,16 @@ def find_one(book: Union[str, int], available: Optional[int] = 1,
     status_code=status.HTTP_201_CREATED,
 )
 def create(book: BookModel, current_user: User = Depends(get_current_user)) -> Response:
+    """
+    Create a new book.
+
+    Args:
+        book: BookModel object containing book details.
+        current_user: The current authenticated user.
+
+    Returns:
+        Response: Response object indicating success or failure.
+    """
     try:
         saved = orm.create(book)
         if saved is None:
@@ -121,6 +144,13 @@ def create(book: BookModel, current_user: User = Depends(get_current_user)) -> R
     status_code=status.HTTP_200_OK,
 )
 def update(book: BookModel, current_user: User = Depends(get_current_user)):
+    """
+    Update an existing book.
+
+    Args:
+        book: BookModel object containing updated book details.
+        current_user: The current authenticated user.
+    """
     pass
 
 
@@ -130,12 +160,30 @@ def update(book: BookModel, current_user: User = Depends(get_current_user)):
     status_code=status.HTTP_301_MOVED_PERMANENTLY,
 )
 def delete(book_id: int, current_user: User = Depends(get_current_user)):
+    """
+    Delete a book by ID.
+
+    Args:
+        book_id: The ID of the book to be deleted.
+        current_user: The current authenticated user.
+    """
     pass
 
 
 # for dev
 @router.post('/seed')
 def seed_book(book: BookModel, current_user: User = Depends(get_current_user)):
+    """
+    Seed a book.
+
+    Args:
+        book: BookModel object containing book details.
+        current_user: The current authenticated user.
+
+    Returns:
+        Response: Response object indicating success or failure.
+    """
+
     # book = BookModel(title='Demo Book', short_description='A Nice Book', author='Yusuf Berkay Girgin')
     # class BookModel(BaseModel):
     #     title: str

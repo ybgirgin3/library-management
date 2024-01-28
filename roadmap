@@ -9,6 +9,6 @@
 [+] celery structure
 [+] task management, worker management, beat
 [+] authentication and authorization
-[ ] dockerize app
+[+] dockerize app
 
 [ ] documentation

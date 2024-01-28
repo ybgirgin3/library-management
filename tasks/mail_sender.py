@@ -14,6 +14,23 @@ load_dotenv()
 
 
 class Mail:
+    """
+    A class to handle email notifications for overdue books and weekly reports.
+
+    Attributes:
+        CREDENTIALS (dict): Credentials for the email sender.
+        OVERDUE_SUBJECT (str): Subject for the overdue email notifications.
+        REPORT_SUBJECT (str): Subject for the weekly report email notifications.
+
+    Methods:
+        __init__: Initializes the Mail instance.
+        overdue: Sends email notifications for overdue books.
+        weekly_report: Sends weekly report email notifications.
+        send: Sends an email to the specified recipient.
+        create_html_body: Creates the HTML body for the email.
+
+    """
+
     # CREDENTIALS = json.loads(open('.credentials.json'))
     CREDENTIALS = {
         'EMAIL': 'library_management@outlook.com',
@@ -37,6 +54,9 @@ class Mail:
         # self.smtp.login(self.CREDENTIALS['EMAIL'], self.CREDENTIALS['PASSWORD'])
 
     def overdue(self):
+        """
+        Sends email notifications for overdue books.
+        """
         try:
             for rec in self.receiver_mails:
                 self.email['From'] = self.CREDENTIALS['EMAIL']
@@ -47,6 +67,9 @@ class Mail:
             print('error in overdue send mail', e, rec)
 
     def weekly_report(self):
+        """
+        Sends weekly report email notifications.
+        """
         try:
             for rec in self.receiver_mails:
                 self.email['From'] = self.CREDENTIALS['EMAIL']
@@ -57,9 +80,12 @@ class Mail:
             print('error in weekly report send mail', e, rec)
 
     def send(self, receiver):
-        # [{'id': 3, 'patron_id': 1, 'book_id': 2,
-        #         'checkout_date': datetime.datetime(2024, 1, 27, 18, 46, 28, 897807),
-        #         'refund_date': datetime.datetime(2024, 1, 27, 18, 46, 28, 897807), 'is_active': True}]
+        """
+        Sends an email to the specified recipient.
+
+        Args:
+            receiver (str): Email address of the recipient.
+        """
 
         try:
             self.smtp.starttls()
@@ -72,6 +98,16 @@ class Mail:
             print('error while sending mail', e, receiver)
 
     def create_html_body(self, data: DataFrame):
+        """
+         Creates the HTML body for the email.
+
+         Args:
+             data (DataFrame): Data to be included in the email.
+
+         Returns:
+             MIMEMultipart: HTML email body.
+         """
+
         body = f"""
             <html>
               <body>

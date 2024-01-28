@@ -26,6 +26,17 @@ checkout_orm = ORM(model='CheckoutModel')
 
 @router.get('/all', response_description='get all checkouts')
 def find_all(overdue: Optional[int] = 0, current_user: User = Depends(get_current_user)):
+    """
+    Retrieve all checkouts.
+
+    Args:
+        overdue: Flag indicating whether to retrieve only overdue checkouts.
+        current_user: The current authenticated user.
+
+    Returns:
+        Response: Response object containing checkouts or error message.
+    """
+
     def _find_overdue(_checkouts: List[CheckoutModel]) -> List[CheckoutModel]:
         today = datetime.datetime.utcnow()
         return [checkout for checkout in checkouts if checkout.refund_date <= today]
@@ -70,11 +81,17 @@ def find_one(
 ):
     """
     usage: :0000/find?book=1&patron=3&is_active=1
-    :param checkout:  checkout id
-    :param patron:    patron id
-    :param book:      book id
-    :param is_active: is active?
-    :return:
+    Retrieve a single checkout.
+
+    Args:
+        checkout: Checkout ID.
+        patron: Patron ID.
+        book: Book ID.
+        is_active: Flag indicating whether the checkout is active.
+        current_user: The current authenticated user.
+
+    Returns:
+        Response: Response object containing the checkout or error message.
     """
     q_filter: dict = {}
     try:
@@ -107,9 +124,15 @@ def find_one(
 def checkout_book(patron_id: int, book_id: int, current_user: User = Depends(get_current_user)):
     """
     usage :0000/new?patron_id=1&book_id=199
-    :param patron_id: patron id
-    :param book_id:   book id
-    :return:
+    Checkout a book.
+
+    Args:
+        patron_id: Patron ID.
+        book_id: Book ID.
+        current_user: The current authenticated user.
+
+    Returns:
+        Response: Response object indicating success or failure.
     """
 
     try:
@@ -173,6 +196,15 @@ def checkout_book(patron_id: int, book_id: int, current_user: User = Depends(get
 
 @router.post('/seed', response_description='create a overdue checkout')
 def create_overdue(checkout: CheckoutModel):
+    """
+    Create an overdue checkout.
+
+    Args:
+        checkout: CheckoutModel object containing checkout details.
+
+    Returns:
+        Response: Response object indicating success or failure.
+    """
     checkout.checkout_date = datetime.datetime.utcnow()
     checkout.refund_date = datetime.datetime.utcnow()
     create(checkout)
@@ -184,6 +216,16 @@ def create_overdue(checkout: CheckoutModel):
 #     status_code=status.HTTP_201_CREATED,
 # )
 def create(checkout: CheckoutModel, current_user: User = Depends(get_current_user)) -> Response:
+    """
+    Create a checkout.
+
+    Args:
+        checkout: CheckoutModel object containing checkout details.
+        current_user: The current authenticated user.
+
+    Returns:
+        Response: Response object indicating success or failure.
+    """
     try:
         saved = checkout_orm.create(checkout)
         if saved is None:

@@ -23,6 +23,15 @@ orm = ORM(model='PatronModel')
     status_code=status.HTTP_200_OK,
 )
 def find_all(current_user: User = Depends(get_current_user)) -> Response:
+    """
+    Retrieve all patrons.
+
+    Args:
+        current_user: The current authenticated user.
+
+    Returns:
+        Response: Response object containing patrons or error message.
+    """
     try:
         patrons: Union[List[PatronModel], None] = orm.find_all()
         if patrons is None:
@@ -51,8 +60,14 @@ def find_all(current_user: User = Depends(get_current_user)) -> Response:
 def find_one(patron: Union[str, int], current_user: User = Depends(get_current_user)) -> Response:
     """
     usage :0000/patrons/find?patron=1
-    :param patron: patron id or name or email
-    :return:
+    Retrieve a single patron.
+
+    Args:
+        patron: Patron ID, name, or email.
+        current_user: The current authenticated user.
+
+    Returns:
+        Response: Response object containing the patron or error message.
     """
     try:
         # NOTE: run find_one value whether param is id or email or name
@@ -93,6 +108,16 @@ def find_one(patron: Union[str, int], current_user: User = Depends(get_current_u
     status_code=status.HTTP_201_CREATED,
 )
 def create(patron: PatronModel, current_user: User = Depends(get_current_user)) -> Response:
+    """
+    Create a new patron.
+
+    Args:
+        patron: PatronModel object containing patron details.
+        current_user: The current authenticated user.
+
+    Returns:
+        Response: Response object indicating success or failure.
+    """
     try:
         saved = orm.create(patron)
         if saved is None:
@@ -119,6 +144,13 @@ def create(patron: PatronModel, current_user: User = Depends(get_current_user)) 
     status_code=status.HTTP_200_OK,
 )
 def update(patron: PatronModel, current_user: User = Depends(get_current_user)):
+    """
+    Update an existing patron.
+
+    Args:
+        patron: PatronModel object containing updated patron details.
+        current_user: The current authenticated user.
+    """
     pass
 
 
@@ -128,12 +160,30 @@ def update(patron: PatronModel, current_user: User = Depends(get_current_user)):
     status_code=status.HTTP_301_MOVED_PERMANENTLY,
 )
 def delete(patron_id: int, current_user: User = Depends(get_current_user)):
+    """
+    Delete a patron by ID.
+
+    Args:
+        patron_id: The ID of the patron to be deleted.
+        current_user: The current authenticated user.
+    """
     pass
 
 
 # for dev
 @router.post('/seed')
 def seed_patron(patron: PatronModel, current_user: User = Depends(get_current_user)):
+    """
+    Seed a patron.
+
+    Args:
+        patron: PatronModel object containing patron details.
+        current_user: The current authenticated user.
+
+    Returns:
+        Response: Response object indicating success or failure.
+    """
+
     # book = BookModel(title='Demo Book', short_description='A Nice Book', author='Yusuf Berkay Girgin')
     # patron = PatronModel(
     #     name='Yusuf Berkay Girgin',

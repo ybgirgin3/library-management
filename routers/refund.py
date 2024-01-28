@@ -21,6 +21,18 @@ checkout_orm = ORM(model='CheckoutModel')
     response_description='refund a book',
 )
 def refund(checkout_id: int, patron_id: int, book_id: int, current_user: User = Depends(get_current_user)):
+    """
+    Refund a book.
+
+    Args:
+        checkout_id: The ID of the checkout to be refunded.
+        patron_id: The ID of the patron who checked out the book.
+        book_id: The ID of the book to be refunded.
+        current_user: The current authenticated user.
+
+    Returns:
+        Response: Response object indicating success or failure.
+    """
     try:
         # create query filter
         # search for unavailable books

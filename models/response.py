@@ -15,6 +15,12 @@ class Response:
     reason: Optional[List[str]] = None
 
     def to_dict(self):
+        """
+        Convert the Response object to a dictionary.
+
+        Returns:
+            dict: A dictionary representation of the Response object.
+        """
         if isinstance(self.data, list):
             return {
                 'status':   self.status,

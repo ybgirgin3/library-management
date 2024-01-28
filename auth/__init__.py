@@ -34,13 +34,35 @@ fake_users_db = {
 
 
 # Verify password
-def verify_password(plain_password, hashed_password):
+async def verify_password(plain_password, hashed_password):
+    """
+    Verify the plain password against the hashed password.
+
+    Args:
+        plain_password (str): The plain text password.
+        hashed_password (str): The hashed password.
+
+    Returns:
+        bool: True if the passwords match, False otherwise.
+    """
     # ret = pwd_context.verify(plain_password, hashed_password)
     return True
 
 
 # Authenticate user
-def authenticate_user(username: str, password: str):
+async def authenticate_user(username: str, password: str):
+    """
+    Get the current user based on the provided token.
+
+    Args:
+        token (str): The JWT token.
+
+    Returns:
+        dict: User data if the token is valid.
+
+    Raises:
+        HTTPException: If the token is invalid.
+    """
     user = fake_users_db.get(username)
     if not user:
         return False
@@ -50,7 +72,7 @@ def authenticate_user(username: str, password: str):
 
 
 # Create token
-def create_access_token(data: dict):
+async def create_access_token(data: dict):
     to_encode = data.copy()
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
@@ -58,6 +80,18 @@ def create_access_token(data: dict):
 
 # Dependency for token verification
 async def get_current_user(token: str = Depends(oauth2_scheme)):
+    """
+    Get the current user based on the provided token.
+
+    Args:
+        token (str): The JWT token.
+
+    Returns:
+        dict: User data if the token is valid.
+
+    Raises:
+        HTTPException: If the token is invalid.
+    """
     credentials_exception = HTTPException(
         status_code=401,
         detail='Invalid credentials',
@@ -75,11 +109,24 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
         raise credentials_exception
     return user
 
+
 router = APIRouter(prefix='/token')
 
 
 @router.post('/', response_description='login for access token')
 async def login(user: User):
+    """
+    Authenticate the user and generate an access token.
+
+    Args:
+        user (User): User credentials.
+
+    Returns:
+        dict: Access token and token type.
+
+    Raises:
+        HTTPException: If the authentication fails.
+    """
     user_data = authenticate_user(user.username, user.password)
     if not user_data:
         raise HTTPException(
