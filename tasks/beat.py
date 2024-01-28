@@ -9,14 +9,14 @@ from celery import Celery
 app = Celery('library', broker='redis://localhost:6379/0')
 
 app.conf.beat_schedule = {
-    'task.reporter': {
-        'task': 'task.reporter',
-        'schedule': datetime.timedelta(seconds=10)
+    'task.overdue_process': {
+        'task': 'task.overdue_process',
+        'schedule': datetime.timedelta(seconds=50)
     },
-    # 'minutely_reminder': {
-    #     'task': 'task.reminder',
-    #     'schedule': crontab(minute='*/1')
-    # },
+    'task.weekly_report': {
+        'task': 'task.weekly_report',
+        'schedule': datetime.timedelta(seconds=20)
+    },
 }
 
 app.conf.result_backend = 'redis://localhost:6379/1'

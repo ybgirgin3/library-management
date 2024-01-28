@@ -70,7 +70,13 @@ def reporter(self, checkouts: List[Dict]) -> str:
 # =========== mails ends ===============
 
 
-@app.task(name='task.process')
-def process():
+@app.task(name='task.overdue_process')
+def overdue_process():
     result_chain = chain(get_overdues.s(), reminder.s())
+    print(result_chain())
+
+
+@app.task(name='task.weekly_report')
+def weekly_report_process():
+    result_chain = chain(get_checkouts.s(), reporter.s())
     print(result_chain())

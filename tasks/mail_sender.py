@@ -33,6 +33,9 @@ class Mail:
         self.data = [data] if isinstance(data, str) else data
         self.email = self.create_html_body(DataFrame(self.data))
 
+        # self.smtp.starttls()
+        # self.smtp.login(self.CREDENTIALS['EMAIL'], self.CREDENTIALS['PASSWORD'])
+
     def overdue(self):
         for rec in self.receiver_mails:
             self.email['From'] = self.CREDENTIALS['EMAIL']
